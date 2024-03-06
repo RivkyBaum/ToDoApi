@@ -46,11 +46,13 @@ app.MapGet("/item", async (usersContext context) =>
     var items = await context.Items.ToListAsync();
     return items;
 });
-app.MapPost("/item", async (usersContext context, Item newItem) =>
+app.MapPost("/item/{name}", async (ToDoDbContext context, string name) =>
 {
-    context.Items.Add(newItem);
+    var lastId = context.Items?.Max(u => u.Id) ?? 0;
+    var item=new Item{Id=lastId+1,Name=name,IsComplete=false};
+    context.Items.Add(item);
     await context.SaveChangesAsync();
-    return newItem;
+    return item;
 
     // return Results.Created($"/item/{newItem.Id}", newItem);
 });
